@@ -1,0 +1,30 @@
+{
+  "name": "@ares/files",
+  "version": "1.0.0",
+  "description": "File management engine",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "files",
+    "directory",
+    "filesystem"
+  ],
+  "author": "Roberto Stefani",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rstefani87info/ares-files.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rstefani87info/ares-files/issues"
+  },
+  "homepage": "https://github.com/rstefani87info/ares-files#readme",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "moment": "^2.30.1",
+    "path": "^0.12.7"
+  }
+}
