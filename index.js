@@ -125,7 +125,7 @@ export function isDirectory(this_string) {
 
  */
 export function isFile(this_string) {
-  return !statSync(this_string).isDirectory() && fileExists(this_string);
+  return  fileExists(this_string) && !statSync(this_string).isDirectory();
 }
 /**
  * @prototype {string}
@@ -311,6 +311,39 @@ export function fileExists(this_string) {
   } catch (e) {
     return false;
   }
+}
+
+/*
+ * @prototype {string}
+ * @param {string} this_path
+ * @param {boolean} recoursive
+ * 
+ * @desc {en} Create directory
+ * @desc {it} Crea una directory
+ * @desc {es} Crear un directorio
+ * @desc {fr} Creer un dossier
+ * @desc {pt} Crie um diretório
+ */
+export function createDirectory(this_path, recoursive = false) {
+  if (!existsSync(path)) {
+    return mkdirSync(path, { recursive: recoursive });
+  }
+}
+
+/*
+ * @prototype {string}
+ * @param {string} this_path
+ * 
+ * @desc {en} Convert file name to js property name
+ * @desc {it} Converti il nome del file in un nome di proprietà js
+ * @desc {es} Convertir el nombre del archivo en un nombre de propiedad js
+ * @desc {fr} Convertir le nom de fichier en un nom de propriété js
+ * @desc {pt} Converta o nome do arquivo em um nome de propriedade js
+ * 
+ */
+export function getFileNameAsPropertyName(this_path) {
+  return fileName
+    .replaceAll(/\W/g, "_");
 }
 
  
