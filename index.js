@@ -9,9 +9,6 @@ import { join, resolve, extname, basename, dirname, normalize, relative } from "
  * @returns {string}
  * 
  * Get absolute path
-
-
-
  */
 export function getAbsolutePath(this_file) { return resolve(this_file); } 
 
@@ -24,7 +21,6 @@ export function getAbsolutePath(this_file) { return resolve(this_file); }
  * @param {array} fileArray
  *
  * Get all files in the directory recursively if required
-
  */
 export function getFilesRecursively(
   this_string,
@@ -83,9 +79,6 @@ export function getFiles(
  * @param {string} this_string
  *
  * Check if the path is a directory
-
-
-
  */
 export function isDirectory(this_string) {
   return statSync(this_string).isDirectory();
@@ -95,12 +88,9 @@ export function isDirectory(this_string) {
  * @param {string} this_string
  *
  * Check if the path is a file
-
-
-
  */
 export function isFile(this_string) {
-  return  fileExists(this_string) && !statSync(this_string).isDirectory();
+  return  fileExists(this_string) && !isDirectory(this_string);
 }
 /**
  * @prototype {string}
@@ -108,9 +98,6 @@ export function isFile(this_string) {
  * @param {string} encoding
  *
  * Read file content
-
-
-
  *
  */
 export function getFileContent(this_string, encoding = "utf-8") {
@@ -130,9 +117,6 @@ export function getFileContent(this_string, encoding = "utf-8") {
  * @param {string} encoding
  *
  * Write file content
-
-
-
  *
  */
 export async function setFileContent(filePath, content, encoding = "utf-8") {
@@ -154,9 +138,6 @@ export async function setFileContent(filePath, content, encoding = "utf-8") {
  * @param {string} file
  *
  * Get file path based on his parent path
-
-
-
  *
  */
 export function getFile(this_path, file) {
@@ -167,9 +148,6 @@ export function getFile(this_path, file) {
  * @param {string} this_string
  *
  * Get file extension
-
-
-
  *
  */
 export function getFileExtension(this_string) {
@@ -180,9 +158,6 @@ export function getFileExtension(this_string) {
  * @param {string} this_string
  *
  * Get file name without extension
-
-
-
  */
 export function getFileName(this_string) {
   return getBaseName(this_string).replace(
@@ -204,9 +179,6 @@ export function getBaseName(this_string) {
  * @param {string} this_string
  *
  * Get parent directory
-
-
-
  */
 export function getParent(this_string) {
   const parentDir = dirname(this_string);
@@ -219,9 +191,6 @@ export function getParent(this_string) {
  * @param {string} referenceDir
  * 
  * Get relative path from this string
-
-
-
  * 
  */
 export function getRelativePathFrom(this_string, referenceDir) {
@@ -233,9 +202,6 @@ export function getRelativePathFrom(this_string, referenceDir) {
  * @param {string} this_string
  * 
  * Check if file exists
-
-
-
  */
 export function fileExists(this_string) {
   try {
