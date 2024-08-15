@@ -194,7 +194,7 @@ export function getParent(this_string) {
  * 
  */
 export function getRelativePathFrom(this_string, referenceDir) {
-  return normalize(relative(referenceDir, this_string));
+  return relative(normalize(referenceDir), normalize(this_string));
 }
 
 /**
