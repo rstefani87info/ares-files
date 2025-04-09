@@ -219,8 +219,8 @@ export function fileExists(this_string) {
  * Create directory
  */
 export function createDirectory(this_path, recoursive = false) {
-  if (!existsSync(path)) {
-    return mkdirSync(path, { recursive: recoursive });
+  if (!existsSync(this_path)) {
+    return mkdirSync(this_path, { recursive: recoursive });
   }
 }
 
@@ -232,7 +232,7 @@ export function createDirectory(this_path, recoursive = false) {
  * 
  */
 export function getFileNameAsPropertyName(this_path) {
-  return fileName
+  return this_path
     .replaceAll(/\W/g, "_");
 }
 
