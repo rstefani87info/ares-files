@@ -1,4 +1,4 @@
-import { readdirSync, statSync, readFileSync,  mkdir, writeFile } from "fs";
+import { readdirSync, statSync, readFileSync,  mkdir, writeFile, existsSync, mkdirSync, copyFileSync } from "fs";
 import { join, resolve, extname, basename, dirname, normalize, relative } from "path";
 
  
@@ -234,6 +234,40 @@ export function createDirectory(this_path, recoursive = false) {
 export function getFileNameAsPropertyName(this_path) {
   return this_path
     .replaceAll(/\W/g, "_");
+}
+
+/**
+ * @prototype {string}
+ * @param {string} src
+ * @param {string} dest
+ * 
+ * Copy directory content from src to dest
+ */
+export function copyDir(src, dest, {exclude = []} = {}) {
+  if (!fileExists(dest)) {
+    createDirectory(dest, true);
+  }
+  const entries = readdirSync(src);
+
+  for (let entry of entries) {
+    const escapedEntry = entry.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if(exclude.includes(entry) || exclude.some(e=>(e instanceof RegExp ? e.test(entry) : e.match(new RegExp(`^${escapedEntry}(/|\\\\)*$`))))){
+      continue;
+    }
+    const srcPath = join(src, entry);
+    const destPath = join(dest, entry);
+
+    if (isDirectory(srcPath)) {
+      copyDir(srcPath, destPath, {
+        exclude:exclude.map(e=>(e instanceof RegExp ? e.source : e))
+          .filter(e=>e.match(new RegExp(`^${escapedEntry}(/|\\\\)*.*$`)))
+          .map(e=>e.replace(new RegExp(`^${escapedEntry}(/|\\\\)*`),""))
+        }
+      );
+    } else {
+      copyFileSync(srcPath, destPath);
+    }
+  }
 }
 
  
