@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/rstefani87info/ares-files#readme",
   "dependencies": {
+    "@ares/core": "workspace:^",
     "fs": "^0.0.1-security",
     "moment": "^2.30.1",
     "path": "^0.12.7",
