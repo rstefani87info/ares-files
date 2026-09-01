@@ -5,10 +5,14 @@ import {
   existsSync,
   mkdirSync,
   copyFileSync,
+  writeFileSync,
   promises as fsPromises,
   renameSync,
   rmdirSync,
   unlinkSync,
+  createReadStream,
+  createWriteStream,
+  cpSync,
 } from "fs";
 import {
   join,
@@ -136,6 +140,33 @@ export function getFileContent(this_string, encoding = "utf-8") {
     console.error(`Error reading file ${this_string}:`, error.message);
     throw error;
   }
+}
+
+/**
+ * @prototype {string}
+ * @param {string} this_filePath
+ * @param {string} content
+ * @param {string} encoding
+ *
+ * Write file content synchronously
+ *
+ */
+export function setFileContentSync(this_filePath, content, encoding = "utf-8") {
+  const parent = getAbsolutePath(getParent(this_filePath));
+  if (!fileExists(parent)) createDirectory(parent, true);
+  writeFileSync(this_filePath, content, { encoding, flag: "w" });
+}
+
+/**
+ * @prototype {string}
+ * @param {string} src
+ * @param {string} dest
+ *
+ * Copy file synchronously
+ *
+ */
+export function copyFileSyncEx(src, dest) {
+  copyFileSync(src, dest);
 }
 
 /**
@@ -411,6 +442,203 @@ export function writeTempFile(this_name, content, encoding = "utf-8") {
   const tempFilePath = join(tmpdir(), this_name);
   setFileContent(tempFilePath, content, encoding);
   return tempFilePath;
+}
+
+/**
+ * @prototype {string}
+ * @param {string} this_string
+ *
+ * Get file stats (mtime, size, etc.)
+ *
+ */
+export function getFileStats(this_string) {
+  try {
+    return statSync(normalize(this_string));
+  } catch (e) {
+    return null;
+  }
+}
+
+/**
+ * @prototype {string}
+ * @param {string} this_string
+ * @param {number} fallbackValue
+ *
+ * Get file version based on modification time
+ *
+ */
+export function getFileVersion(this_string, fallbackValue = Date.now()) {
+  try {
+    return Math.trunc(statSync(normalize(this_string)).mtimeMs);
+  } catch {
+    return fallbackValue;
+  }
+}
+
+/**
+ * @prototype {string}
+ * @param {string} this_path
+ * @param {object} options
+ * @param {function} callback
+ *
+ * Watch file or directory for changes
+ *
+ */
+export function watch(this_path, options, callback) {
+  return fsPromises.watch(this_path, options, callback);
+}
+
+export async function watchAsync(this_path, options) {
+  return fsPromises.watch(this_path, options);
+}
+
+/**
+ * @prototype {string}
+ * @param {string} this_path
+ *
+ * Remove file
+ *
+ */
+export function removeFile(this_path) {
+  try {
+    unlinkSync(this_path);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * @prototype {string}
+ * @param {string} this_path
+ * @param {boolean} recursive
+ *
+ * Remove directory
+ *
+ */
+export function removeDirectory(this_path, recursive = false) {
+  try {
+    if (recursive) {
+      rmdirSync(this_path, { recursive: true });
+    } else {
+      rmdirSync(this_path);
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * @prototype {string}
+ * @param {string} this_path
+ *
+ * Create read stream for file
+ *
+ */
+export function createReadStreamEx(this_path, options) {
+  return createReadStream(this_path, options);
+}
+
+/**
+ * @prototype {string}
+ * @param {string} this_path
+ *
+ * Create write stream for file
+ *
+ */
+export function createWriteStreamEx(this_path, options) {
+  return createWriteStream(this_path, options);
+}
+
+/**
+ * @prototype {string}
+ * @param {string} src
+ * @param {string} dest
+ * @param {object} options
+ *
+ * Copy files/directories recursively (like fs.cpSync)
+ *
+ */
+export function copyRecursive(src, dest, options = {}) {
+  return cpSync(src, dest, { recursive: true, force: true, ...options });
+}
+
+/**
+ * @prototype {string}
+ * @param {string} this_string
+ * @param {string} pattern
+ * @param {string} mode
+ * @param {boolean} recursively
+ * @param {array} fileArray
+ *
+ * Get all files with file type info (like readdirSync with withFileTypes)
+ *
+ */
+export function getFilesWithTypes(
+  this_string,
+  pattern = /.*/,
+  mode = "*",
+  recursively = false,
+  fileArray = [],
+) {
+  const files = readdirSync(this_string, { withFileTypes: true });
+
+  files.forEach((file) => {
+    const filePath = join(this_string, file.name);
+    if (
+      filePath.match(pattern) &&
+      (mode == "*" || (file.isDirectory() && mode == "d") || (file.isFile() && mode == "f"))
+    ) {
+      fileArray.push({ path: filePath, name: file.name, isDirectory: file.isDirectory(), isFile: file.isFile() });
+    }
+    if (file.isDirectory() && recursively) {
+      fileArray = [
+        ...fileArray,
+        ...getFilesWithTypes(
+          filePath,
+          pattern,
+          mode,
+          typeof recursively == "int" ? recursively - 1 : recursively,
+          [],
+        ),
+      ];
+    }
+  });
+
+  return fileArray;
+}
+
+/**
+ * @prototype {string}
+ * @param {string} this_filePath
+ * @param {string} encoding
+ *
+ * Read file content as buffer (binary)
+ *
+ */
+export function getFileBuffer(this_filePath) {
+  try {
+    const absolutePath = resolve(this_filePath);
+    return readFileSync(absolutePath);
+  } catch (error) {
+    console.error(`Error reading file ${this_filePath}:`, error.message);
+    throw error;
+  }
+}
+
+/**
+ * @prototype {string}
+ * @param {string} this_filePath
+ * @param {Buffer|string} content
+ *
+ * Write file content as buffer (binary)
+ *
+ */
+export function setFileBuffer(this_filePath, content) {
+  const parent = getAbsolutePath(getParent(this_filePath));
+  if (!fileExists(parent)) createDirectory(parent, true);
+  writeFileSync(this_filePath, content);
 }
  
 
